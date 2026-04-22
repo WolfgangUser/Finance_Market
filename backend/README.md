@@ -5,37 +5,57 @@
 ## Технологии
 
 - Backend: Django + Django REST Framework
-- Database: PostgreSQL
+- Database: PostgreSQL (опционально) / SQLite (по умолчанию для разработки)
 - Authentication: JWT (SimpleJWT)
-- Docker & Docker Compose
 
 ## Требования
 
-- Python 3.11+
-- PostgreSQL 15+ (или Docker)
+- Python 3.9+
 
 ## Запуск проекта
 
-### Вариант 1: С использованием Docker (рекомендуется)
-
-```bash
-cd backend
-
-# Сборка и запуск контейнеров
-docker-compose up --build
-
-# Приложение доступно по адресу http://localhost:8000
-```
-
-### Вариант 2: Локальный запуск
+### Быстрый старт (SQLite по умолчанию)
 
 1. Установите зависимости:
 ```bash
 pip install -r requirements.txt
 ```
 
-2. Настройте переменные окружения (опционально):
+2. Примените миграции:
 ```bash
+python manage.py migrate
+```
+
+3. Создайте суперпользователя (опционально):
+```bash
+python manage.py createsuperuser
+```
+
+4. Запустите сервер:
+```bash
+python manage.py runserver 0.0.0.0:8000
+```
+
+Приложение доступно по адресу http://localhost:8000
+
+### Использование PostgreSQL (опционально)
+
+Если вы хотите использовать PostgreSQL вместо SQLite:
+
+1. Установите и запустите PostgreSQL
+
+2. Настройте переменные окружения:
+```bash
+# Windows (PowerShell)
+$env:USE_POSTGRES="true"
+$env:POSTGRES_DB=financial_markets
+$env:POSTGRES_USER=postgres
+$env:POSTGRES_PASSWORD=postgres
+$env:POSTGRES_HOST=localhost
+$env:POSTGRES_PORT=5432
+
+# Linux/Mac
+export USE_POSTGRES=true
 export POSTGRES_DB=financial_markets
 export POSTGRES_USER=postgres
 export POSTGRES_PASSWORD=postgres
@@ -48,12 +68,7 @@ export POSTGRES_PORT=5432
 python manage.py migrate
 ```
 
-4. Создайте суперпользователя:
-```bash
-python manage.py createsuperuser
-```
-
-5. Запустите сервер:
+4. Запустите сервер:
 ```bash
 python manage.py runserver 0.0.0.0:8000
 ```
@@ -130,8 +145,7 @@ backend/
  ├── news/            # Новости
  ├── manage.py        # Управление проектом
  ├── requirements.txt # Зависимости
- ├── Dockerfile       # Docker образ
- └── docker-compose.yml # Docker Compose конфигурация
+ └── README.md        # Документация
 ```
 
 ## Модели данных
