@@ -18,9 +18,13 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework_simplejwt.views import TokenRefreshView
 from users.views import RegisterView, LoginView
+from django.views.generic import TemplateView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    
+    # Main page
+    path('', TemplateView.as_view(template_name='index.html'), name='home'),
     
     # Auth endpoints
     path('api/auth/register/', RegisterView.as_view(), name='register'),

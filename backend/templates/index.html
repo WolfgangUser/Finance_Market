@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Монитор Финансовых Рынков</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #10b981;
+            --danger: #ef4444;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --gray: #64748b;
+            --border: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--dark);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            font-size: 2rem;
+        }
+
+        nav {
+            display: flex;
+            gap: 20px;
+        }
+
+        nav button {
+            background: transparent;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            color: var(--gray);
+        }
+
+        nav button:hover, nav button.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h2 {
+            margin-bottom: 20px;
+            color: var(--dark);
+            font-size: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .assets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .asset-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+
+        .asset-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .asset-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .asset-ticker {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .asset-type {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .type-stock { background: #dbeafe; color: #1e40af; }
+        .type-crypto { background: #fef3c7; color: #92400e; }
+        .type-forex { background: #d1fae5; color: #065f46; }
+
+        .asset-name {
+            color: var(--gray);
+            margin-bottom: 10px;
+        }
+
+        .asset-price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--secondary);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--gray);
+        }
+
+        .spinner {
+            border: 3px solid var(--border);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .watchlist-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .watchlist-item:last-child {
+            border-bottom: none;
+        }
+
+        .news-item {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .news-item:last-child {
+            border-bottom: none;
+        }
+
+        .news-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .news-meta {
+            font-size: 0.9rem;
+            color: var(--gray);
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <span class="logo-icon">📈</span>
+                <span>FinanceMonitor</span>
+            </div>
+            <nav id="mainNav">
+                <button onclick="showSection('assets')" class="active" id="nav-assets">Активы</button>
+                <button onclick="showSection('news')" id="nav-news">Новости</button>
+                <button onclick="showSection('watchlists')" id="nav-watchlists" class="hidden">Списки</button>
+            </nav>
+            <div class="auth-buttons" id="authButtons">
+                <button class="btn btn-secondary" onclick="openModal('loginModal')">Вход</button>
+                <button class="btn btn-primary" onclick="openModal('registerModal')">Регистрация</button>
+            </div>
+            <div class="user-info hidden" id="userInfo">
+                <div class="user-avatar" id="userAvatar">U</div>
+                <span id="userEmail">user@example.com</span>
+                <button class="btn btn-danger" style="margin-left: 10px;" onclick="logout()">Выход</button>
+            </div>
+        </header>
+
+        <div id="alerts"></div>
+
+        <section id="assetsSection" class="card">
+            <h2>Финансовые Активы</h2>
+            <div class="form-group" style="display: flex; gap: 15px;">
+                <input type="text" id="searchAsset" placeholder="Поиск по названию или тику..." style="flex: 1;">
+                <select id="filterType">
+                    <option value="">Все типы</option>
+                    <option value="stock">Акции</option>
+                    <option value="crypto">Криптовалюты</option>
+                    <option value="forex">Форекс</option>
+                </select>
+                <button class="btn btn-primary" onclick="loadAssets()">Найти</button>
+            </div>
+            <div id="assetsList" class="assets-grid">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    Загрузка активов...
+                </div>
+            </div>
+        </section>
+
+        <section id="newsSection" class="card hidden">
+            <h2>Последние Новости</h2>
+            <div id="newsList">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    Загрузка новостей...
+                </div>
+            </div>
+        </section>
+
+        <section id="watchlistsSection" class="card hidden">
+            <h2>Мои Списки Наблюдения</h2>
+            <button class="btn btn-primary" onclick="openModal('createWatchlistModal')" style="margin-bottom: 20px;">
+                + Создать список
+            </button>
+            <div id="watchlistsList">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    Загрузка списков...
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Вход в систему</h2>
+                <button class="close-modal" onclick="closeModal('loginModal')">&times;</button>
+            </div>
+            <form onsubmit="login(event)">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="loginEmail" required>
+                </div>
+                <div class="form-group">
+                    <label>Пароль</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Войти</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Регистрация</h2>
+                <button class="close-modal" onclick="closeModal('registerModal')">&times;</button>
+            </div>
+            <form onsubmit="register(event)">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="registerEmail" required>
+                </div>
+                <div class="form-group">
+                    <label>Пароль</label>
+                    <input type="password" id="registerPassword" required minlength="8">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Зарегистрироваться</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Create Watchlist Modal -->
+    <div id="createWatchlistModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Новый список наблюдения</h2>
+                <button class="close-modal" onclick="closeModal('createWatchlistModal')">&times;</button>
+            </div>
+            <form onsubmit="createWatchlist(event)">
+                <div class="form-group">
+                    <label>Название списка</label>
+                    <input type="text" id="watchlistName" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Создать</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Asset Detail Modal -->
+    <div id="assetDetailModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="assetDetailTitle">Детали актива</h2>
+                <button class="close-modal" onclick="closeModal('assetDetailModal')">&times;</button>
+            </div>
+            <div id="assetDetailContent"></div>
+            <div id="assetPrices" style="margin-top: 20px;"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/api';
+        let accessToken = localStorage.getItem('access_token');
+        let currentUser = JSON.parse(localStorage.getItem('user') || 'null');
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            if (accessToken && currentUser) {
+                showAuthState();
+            }
+            loadAssets();
+            loadNews();
+        });
+
+        function showSection(section) {
+            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+            document.getElementById(`${section}Section`).classList.remove('hidden');
+            
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+            document.getElementById(`nav-${section}`).classList.add('active');
+
+            if (section === 'news') loadNews();
+            if (section === 'watchlists' && accessToken) loadWatchlists();
+        }
+
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function showAlert(message, type = 'success') {
+            const alerts = document.getElementById('alerts');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+            alerts.appendChild(alert);
+            setTimeout(() => alert.remove(), 5000);
+        }
+
+        async function apiRequest(endpoint, options = {}) {
+            const headers = {
+                'Content-Type': 'application/json',
+                ...options.headers
+            };
+
+            if (accessToken) {
+                headers['Authorization'] = `Bearer ${accessToken}`;
+            }
+
+            const response = await fetch(`${API_BASE}${endpoint}`, {
+                ...options,
+                headers
+            });
+
+            if (response.status === 401) {
+                logout();
+                throw new Error('Unauthorized');
+            }
+
+            const data = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(data.error || data.detail || 'Ошибка запроса');
+            }
+
+            return data;
+        }
+
+        async function login(event) {
+            event.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            try {
+                const data = await apiRequest('/auth/login/', {
+                    method: 'POST',
+                    body: JSON.stringify({ email, password })
+                });
+
+                accessToken = data.access;
+                currentUser = data.user;
+                localStorage.setItem('access_token', accessToken);
+                localStorage.setItem('user', JSON.stringify(currentUser));
+                
+                showAuthState();
+                closeModal('loginModal');
+                showAlert('Успешный вход!');
+                loadWatchlists();
+            } catch (error) {
+                showAlert(error.message, 'error');
+            }
+        }
+
+        async function register(event) {
+            event.preventDefault();
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+
+            try {
+                await apiRequest('/auth/register/', {
+                    method: 'POST',
+                    body: JSON.stringify({ email, password })
+                });
+
+                showAlert('Регистрация успешна! Теперь войдите.');
+                closeModal('registerModal');
+                openModal('loginModal');
+            } catch (error) {
+                showAlert(error.message, 'error');
+            }
+        }
+
+        function logout() {
+            accessToken = null;
+            currentUser = null;
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('user');
+            
+            document.getElementById('authButtons').classList.remove('hidden');
+            document.getElementById('userInfo').classList.add('hidden');
+            document.getElementById('nav-watchlists').classList.add('hidden');
+            
+            showAlert('Вы вышли из системы');
+        }
+
+        function showAuthState() {
+            document.getElementById('authButtons').classList.add('hidden');
+            document.getElementById('userInfo').classList.remove('hidden');
+            document.getElementById('nav-watchlists').classList.remove('hidden');
+            document.getElementById('userEmail').textContent = currentUser.email;
+            document.getElementById('userAvatar').textContent = currentUser.email[0].toUpperCase();
+        }
+
+        async function loadAssets() {
+            const search = document.getElementById('searchAsset').value;
+            const type = document.getElementById('filterType').value;
+            
+            let params = new URLSearchParams();
+            if (search) params.append('search', search);
+            if (type) params.append('type', type);
+            
+            const queryString = params.toString();
+            const url = `/assets/${queryString ? '?' + queryString : ''}`;
+
+            try {
+                const assets = await apiRequest(url);
+                renderAssets(assets);
+            } catch (error) {
+                showAlert('Ошибка загрузки активов: ' + error.message, 'error');
+            }
+        }
+
+        function renderAssets(assets) {
+            const container = document.getElementById('assetsList');
+            
+            if (assets.length === 0) {
+                container.innerHTML = '<div class="loading">Активы не найдены</div>';
+                return;
+            }
+
+            container.innerHTML = assets.map(asset => `
+                <div class="asset-card" onclick="showAssetDetail(${asset.id})">
+                    <div class="asset-header">
+                        <span class="asset-ticker">${asset.ticker}</span>
+                        <span class="asset-type type-${asset.type}">${getTypeName(asset.type)}</span>
+                    </div>
+                    <div class="asset-name">${asset.name}</div>
+                    <div class="asset-sector">${asset.sector || ''}</div>
+                </div>
+            `).join('');
+        }
+
+        function getTypeName(type) {
+            const names = { stock: 'Акция', crypto: 'Крипто', forex: 'Форекс' };
+            return names[type] || type;
+        }
+
+        async function showAssetDetail(assetId) {
+            try {
+                const asset = await apiRequest(`/assets/${assetId}/`);
+                const prices = await apiRequest(`/assets/${assetId}/prices/`);
+                
+                document.getElementById('assetDetailTitle').textContent = `${asset.ticker} - ${asset.name}`;
+                document.getElementById('assetDetailContent').innerHTML = `
+                    <p><strong>Тип:</strong> ${getTypeName(asset.type)}</p>
+                    <p><strong>Сектор:</strong> ${asset.sector || 'N/A'}</p>
+                `;
+
+                if (prices && prices.length > 0) {
+                    const latestPrice = prices[0];
+                    document.getElementById('assetPrices').innerHTML = `
+                        <h3>Последняя цена: $${latestPrice.close}</h3>
+                        <p>Объем: ${latestPrice.volume}</p>
+                        <p>Дата: ${new Date(latestPrice.timestamp).toLocaleDateString()}</p>
+                    `;
+                } else {
+                    document.getElementById('assetPrices').innerHTML = '<p>Данные о ценах отсутствуют</p>';
+                }
+
+                openModal('assetDetailModal');
+            } catch (error) {
+                showAlert('Ошибка загрузки деталей: ' + error.message, 'error');
+            }
+        }
+
+        async function loadNews() {
+            try {
+                const news = await apiRequest('/news/');
+                renderNews(news);
+            } catch (error) {
+                showAlert('Ошибка загрузки новостей: ' + error.message, 'error');
+            }
+        }
+
+        function renderNews(news) {
+            const container = document.getElementById('newsList');
+            
+            if (news.length === 0) {
+                container.innerHTML = '<div class="loading">Новостей нет</div>';
+                return;
+            }
+
+            container.innerHTML = news.map(item => `
+                <div class="news-item">
+                    <div class="news-title">${item.title}</div>
+                    <div class="news-meta">${item.source} • ${new Date(item.published_at).toLocaleDateString()}</div>
+                    <p>${item.content}</p>
+                </div>
+            `).join('');
+        }
+
+        async function loadWatchlists() {
+            if (!accessToken) {
+                showAlert('Требуется авторизация', 'error');
+                return;
+            }
+
+            try {
+                const watchlists = await apiRequest('/watchlists/');
+                renderWatchlists(watchlists);
+            } catch (error) {
+                showAlert('Ошибка загрузки списков: ' + error.message, 'error');
+            }
+        }
+
+        function renderWatchlists(watchlists) {
+            const container = document.getElementById('watchlistsList');
+            
+            if (watchlists.length === 0) {
+                container.innerHTML = '<div class="loading">Списки наблюдения пусты</div>';
+                return;
+            }
+
+            container.innerHTML = watchlists.map(list => `
+                <div class="card" style="margin-top: 20px;">
+                    <h3>${list.name}</h3>
+                    <div id="watchlist-${list.id}-assets">
+                        ${list.assets.map(asset => `
+                            <div class="watchlist-item">
+                                <span>${asset.ticker} - ${asset.name}</span>
+                                <button class="btn btn-danger" onclick="removeFromWatchlist(${list.id}, ${asset.id})">Удалить</button>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <button class="btn btn-secondary" style="margin-top: 10px;" onclick="openAddAssetModal(${list.id})">
+                        + Добавить актив
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        async function createWatchlist(event) {
+            event.preventDefault();
+            const name = document.getElementById('watchlistName').value;
+
+            try {
+                await apiRequest('/watchlists/', {
+                    method: 'POST',
+                    body: JSON.stringify({ name })
+                });
+
+                showAlert('Список создан!');
+                closeModal('createWatchlistModal');
+                loadWatchlists();
+            } catch (error) {
+                showAlert(error.message, 'error');
+            }
+        }
+
+        async function removeFromWatchlist(watchlistId, assetId) {
+            try {
+                await apiRequest(`/watchlists/${watchlistId}/remove/`, {
+                    method: 'DELETE',
+                    body: JSON.stringify({ asset_id: assetId })
+                });
+
+                showAlert('Актив удален из списка');
+                loadWatchlists();
+            } catch (error) {
+                showAlert(error.message, 'error');
+            }
+        }
+
+        function openAddAssetModal(watchlistId) {
+            const assetId = prompt('Введите ID актива для добавления:');
+            if (assetId) {
+                addToWatchlist(watchlistId, parseInt(assetId));
+            }
+        }
+
+        async function addToWatchlist(watchlistId, assetId) {
+            try {
+                await apiRequest(`/watchlists/${watchlistId}/add/`, {
+                    method: 'POST',
+                    body: JSON.stringify({ asset_id: assetId })
+                });
+
+                showAlert('Актив добавлен в список');
+                loadWatchlists();
+            } catch (error) {
+                showAlert(error.message, 'error');
+            }
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+            }
+        }
+    </script>
+</body>
+</html>
