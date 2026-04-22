@@ -1,10 +1,24 @@
 ```
-# Python
+# Dependencies
 __pycache__/
-*.py[cod]
-*$py.class
-*.so
+*.pyc
+*.pyo
+*.pyd
 .Python
+env/
+venv/
+ENV/
+.venv/
+.env
+.env.local
+.env.*
+.env~*
+requirements/*.txt
+requirements-dev.txt
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Build artifacts
 build/
 develop-eggs/
 dist/
@@ -21,18 +35,34 @@ wheels/
 .installed.cfg
 *.egg
 
-# Django
+# Testing
+.coverage
+coverage/
+htmlcov/
+.nosetests
+.unit_test.log
+.tox/
+.pytest_cache/
+
+# Environment
+.DS_Store
+Thumbs.db
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Icon?
+Thumbs.db
+.bash_history
+
+# Logs
 *.log
-local_settings.py
-db.sqlite3
-db.sqlite3-journal
 
 # IDE
 .vscode/
 .idea/
-
-# Environment
-.env
-.env.local
-.env.*
+*.swp
+*.swo
+*~
 ```
