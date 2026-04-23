@@ -755,7 +755,7 @@
                     <div id="watchlist-${list.id}-assets">
                         ${list.assets.map(asset => `
                             <div class="watchlist-item">
-                                <span>${asset.ticker} - ${asset.name}</span>
+                                <span>${asset.ticker} - ${asset.name} <strong style="margin-left:10px;color:var(--secondary)">$${(asset.latest_price !== null && asset.latest_price !== undefined) ? Number(asset.latest_price).toFixed(2) : 'N/A'}</strong></span>
                                 <button class="btn btn-danger" onclick="removeFromWatchlist(${list.id}, ${asset.id})">Удалить</button>
                             </div>
                         `).join('')}
